@@ -64,11 +64,36 @@ The repository includes GitHub Actions workflows for:
 
 ### Deploying to Hugging Face Spaces
 
-1. Get a Hugging Face token from [https://huggingface.co/settings/tokens](https://huggingface.co/settings/tokens)
-2. Add it as a secret named `HF_TOKEN` in your GitHub repository settings
-3. Push to the `main` branch - the workflow will automatically deploy
+1. **Create a Hugging Face account** (if you don't have one): [https://huggingface.co/join](https://huggingface.co/join)
 
-**Note**: For Hugging Face Spaces, you may need to rename `web_app.py` to `app.py` or create a symlink. Alternatively, create a `app.py` file that imports from `web_app.py`.
+2. **Create the Space manually** (required first step):
+   - Go to [https://huggingface.co/new-space](https://huggingface.co/new-space)
+   - Set the **Owner** to your username
+   - Set the **Space name** to `paralyze`
+   - Select **SDK**: `Gradio`
+   - Select **Hardware**: `CPU Basic` (free tier)
+   - Click **Create Space**
+
+3. **Get a Hugging Face token**:
+   - Go to [https://huggingface.co/settings/tokens](https://huggingface.co/settings/tokens)
+   - Click **New token**
+   - Name it (e.g., "github-actions")
+   - Select **Role**: `Write` (important!)
+   - Click **Generate a token**
+   - Copy the token immediately
+
+4. **Add the token to GitHub**:
+   - Go to your GitHub repository → **Settings** → **Secrets and variables** → **Actions**
+   - Click **New repository secret**
+   - Name: `HF_TOKEN`
+   - Value: paste your Hugging Face token
+   - Click **Add secret**
+
+5. **Push to deploy**:
+   - Push your code to the `main` branch
+   - The workflow will automatically deploy your app to the Space
+
+**Note**: The `app.py` file is already set up for Hugging Face Spaces compatibility.
 
 ### GitHub Pages
 

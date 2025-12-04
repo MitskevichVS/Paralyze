@@ -23,28 +23,28 @@ jobs:
     - name: Install huggingface_hub
       run: pip install huggingface_hub
     
-    - name: Create Space if it doesn't exist
+    - name: Check if Space exists
       env:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
         HF_USERNAME: ${{ github.repository_owner }}
       run: |
         python << EOF
         import os
-        from huggingface_hub import HfApi, create_repo
+        import sys
+        from huggingface_hub import HfApi
         token = os.environ['HF_TOKEN']
         username = os.environ['HF_USERNAME']
         api = HfApi(token=token)
         try:
             api.repo_info(f'{username}/paralyze', repo_type='space')
-            print('Space already exists')
-        except:
-            print('Creating new Space...')
-            create_repo(
-                repo_id=f'{username}/paralyze',
-                repo_type='space',
-                space_sdk='gradio',
-                token=token
-            )
+            print('✓ Space already exists')
+        except Exception as e:
+            print('✗ Space does not exist yet')
+            print('Please create it manually at: https://huggingface.co/new-space')
+            print('Space name: paralyze')
+            print('SDK: Gradio')
+            print('Hardware: CPU Basic')
+            sys.exit(1)
         EOF
     
     - name: Push to Hugging Face Spaces
