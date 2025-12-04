@@ -20,6 +20,10 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     steps:
       - uses: actions/checkout@v3
       
@@ -129,13 +133,16 @@ jobs:
           echo "Verifying _site directory contents:"
           ls -la _site/
           echo "Checking index.html exists:"
-          test -f _site/index.html && echo "✓ index.html exists" || echo "✗ index.html missing"
+          test -f _site/index.html && echo "✓ index.html exists" || (echo "✗ index.html missing" && exit 1)
+          echo "File size:"
+          du -sh _site/index.html
       
       - name: Upload artifact
         id: upload
         uses: actions/upload-pages-artifact@v3
         with:
           path: '_site'
+        continue-on-error: false
       
       - name: Deploy to GitHub Pages
         id: deployment
