@@ -11,16 +11,47 @@ jobs:
     
     steps:
     - uses: actions/checkout@v3
-    
-    - name: Deploy to Hugging Face Spaces
-      uses: huggingface/huggingface_hub@main
       with:
-        huggingface_token: ${{ secrets.HF_TOKEN }}
-        repo_name: ${{ github.repository_owner }}/paralyze
-        repo_type: space
-        space_sdk: gradio
-        space_hardware: cpu-basic
-        git_user_name: ${{ github.actor }}
-        git_user_email: ${{ github.actor }}@users.noreply.github.com
-        commit_message: "Deploy from GitHub Actions"
+        fetch-depth: 0
+        lfs: true
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install huggingface_hub
+      run: pip install huggingface_hub
+    
+    - name: Create Space if it doesn't exist
+      env:
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        HF_USERNAME: ${{ github.repository_owner }}
+      run: |
+        python << EOF
+        import os
+        from huggingface_hub import HfApi, create_repo
+        token = os.environ['HF_TOKEN']
+        username = os.environ['HF_USERNAME']
+        api = HfApi(token=token)
+        try:
+            api.repo_info(f'{username}/paralyze', repo_type='space')
+            print('Space already exists')
+        except:
+            print('Creating new Space...')
+            create_repo(
+                repo_id=f'{username}/paralyze',
+                repo_type='space',
+                space_sdk='gradio',
+                token=token
+            )
+        EOF
+    
+    - name: Push to Hugging Face Spaces
+      env:
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        HF_USERNAME: ${{ github.repository_owner }}
+      run: |
+        git remote add hf https://${HF_USERNAME}:${HF_TOKEN}@huggingface.co/spaces/${HF_USERNAME}/paralyze || true
+        git push hf main --force
 
