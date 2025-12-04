@@ -30,7 +30,7 @@ jobs:
         run: |
           mkdir -p _site
           REPO_OWNER="${{ github.repository_owner }}"
-          cat > _site/index.html << EOF
+          cat > _site/index.html << 'HTML_EOF'
           <!DOCTYPE html>
           <html lang="en">
           <head>
@@ -95,7 +95,7 @@ jobs:
               
               <h2>🚀 Try the App</h2>
               <p>The interactive app is available on Hugging Face Spaces:</p>
-              <a href="https://huggingface.co/spaces/\${REPO_OWNER}/paralyze" class="app-link">
+              <a href="https://huggingface.co/spaces/$REPO_OWNER/paralyze" class="app-link">
                   Open Paralyze App
               </a>
               
@@ -117,9 +117,22 @@ jobs:
               <p><small>Built with <a href="https://gradio.app">Gradio</a> and <a href="https://github.com/openai/whisper">OpenAI Whisper</a></small></p>
           </body>
           </html>
-          EOF
+          HTML_EOF
+          # Replace the placeholder with actual repo owner
+          sed -i "s/\$REPO_OWNER/$REPO_OWNER/g" _site/index.html
+          # Verify file was created
+          ls -la _site/
+          cat _site/index.html | head -5
+      
+      - name: Verify artifact content
+        run: |
+          echo "Verifying _site directory contents:"
+          ls -la _site/
+          echo "Checking index.html exists:"
+          test -f _site/index.html && echo "✓ index.html exists" || echo "✗ index.html missing"
       
       - name: Upload artifact
+        id: upload
         uses: actions/upload-pages-artifact@v3
         with:
           path: '_site'
