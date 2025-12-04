@@ -1,3 +1,14 @@
+---
+title: Paralyze
+emoji: 🎯
+colorFrom: blue
+colorTo: purple
+sdk: gradio
+sdk_version: 4.0.0
+app_file: app.py
+pinned: false
+---
+
 # Paralyze
 
 Paralyze is a tiny web app that analyzes your speech, detects parasite or filler words, and helps you clean up your communication.
@@ -102,12 +113,24 @@ The repository includes GitHub Actions workflows for:
 GitHub Pages hosts a static landing page (since the Gradio app requires backend processing). 
 
 **To enable GitHub Pages (required first step):**
-1. Go to your GitHub repository
-2. Click **Settings** → **Pages** (in the left sidebar)
-3. Under **Source**, select **GitHub Actions**
-4. Click **Save**
+
+1. **Enable workflow permissions:**
+   - Go to your GitHub repository → **Settings** → **Actions** → **General**
+   - Scroll down to **Workflow permissions**
+   - Select **Read and write permissions**
+   - Click **Save**
+
+2. **Enable GitHub Pages:**
+   - Go to **Settings** → **Pages** (in the left sidebar)
+   - Under **Source**, select **GitHub Actions**
+   - Click **Save**
 
 After enabling Pages, the workflow will automatically deploy the landing page when you push to `main`. The page will be available at `https://YOUR_USERNAME.github.io/REPO_NAME/`
+
+**Troubleshooting:**
+- If you see "Cannot find any run" error, wait 2-3 minutes after enabling Pages, then push again or manually trigger the workflow via **Actions** → **Deploy to GitHub Pages** → **Run workflow**
+- Ensure the `github-pages` environment exists (it should be created automatically when you enable Pages)
+- Check that workflow permissions are set to "Read and write" in Settings → Actions → General
 
 ---
 
