@@ -1,0 +1,26 @@
+name: Deploy to Hugging Face Spaces
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Deploy to Hugging Face Spaces
+      uses: huggingface/huggingface_hub@main
+      with:
+        huggingface_token: ${{ secrets.HF_TOKEN }}
+        repo_name: ${{ github.repository_owner }}/paralyze
+        repo_type: space
+        space_sdk: gradio
+        space_hardware: cpu-basic
+        git_user_name: ${{ github.actor }}
+        git_user_email: ${{ github.actor }}@users.noreply.github.com
+        commit_message: "Deploy from GitHub Actions"
+

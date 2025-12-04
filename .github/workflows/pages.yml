@@ -1,0 +1,129 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+      
+      - name: Create index.html
+        run: |
+          REPO_OWNER="${{ github.repository_owner }}"
+          cat > index.html << EOF
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Paralyze - Parasite Word Counter</title>
+              <style>
+                  body {
+                      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+                      max-width: 800px;
+                      margin: 0 auto;
+                      padding: 2rem;
+                      line-height: 1.6;
+                      color: #333;
+                  }
+                  h1 {
+                      color: #2c3e50;
+                      border-bottom: 3px solid #3498db;
+                      padding-bottom: 0.5rem;
+                  }
+                  .app-link {
+                      display: inline-block;
+                      background: #3498db;
+                      color: white;
+                      padding: 1rem 2rem;
+                      text-decoration: none;
+                      border-radius: 5px;
+                      margin: 1rem 0;
+                      font-weight: bold;
+                      transition: background 0.3s;
+                  }
+                  .app-link:hover {
+                      background: #2980b9;
+                  }
+                  .info {
+                      background: #f8f9fa;
+                      padding: 1rem;
+                      border-radius: 5px;
+                      margin: 1rem 0;
+                  }
+                  code {
+                      background: #f4f4f4;
+                      padding: 0.2rem 0.4rem;
+                      border-radius: 3px;
+                      font-family: 'Courier New', monospace;
+                  }
+              </style>
+          </head>
+          <body>
+              <h1>🎯 Paralyze</h1>
+              <p>Analyze speech and count filler or parasite words in videos.</p>
+              
+              <div class="info">
+                  <h2>Features</h2>
+                  <ul>
+                      <li>Upload video files or provide video URLs</li>
+                      <li>Transcribe audio using OpenAI Whisper</li>
+                      <li>Count occurrences of parasite words (e.g., "um", "uh", "like", "you know")</li>
+                      <li>Support for multi-word phrases</li>
+                  </ul>
+              </div>
+              
+              <h2>🚀 Try the App</h2>
+              <p>The interactive app is available on Hugging Face Spaces:</p>
+              <a href="https://huggingface.co/spaces/\${REPO_OWNER}/paralyze" class="app-link">
+                  Open Paralyze App
+              </a>
+              
+              <h2>📦 Installation</h2>
+              <pre><code>pip install -r requirements.txt</code></pre>
+              
+              <h2>▶️ Run Locally</h2>
+              <pre><code>python web_app.py</code></pre>
+              
+              <h2>📝 Usage</h2>
+              <ol>
+                  <li>Upload a video file or provide a video URL</li>
+                  <li>Enter comma-separated parasite words (e.g., "um, uh, like, you know")</li>
+                  <li>Select a Whisper model (tiny, base, small, or medium)</li>
+                  <li>Click "Analyze" to get word counts</li>
+              </ol>
+              
+              <hr>
+              <p><small>Built with <a href="https://gradio.app">Gradio</a> and <a href="https://github.com/openai/whisper">OpenAI Whisper</a></small></p>
+          </body>
+          </html>
+          EOF
+      
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: '.'
+      
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
+
