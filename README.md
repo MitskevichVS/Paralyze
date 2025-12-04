@@ -68,11 +68,13 @@ The repository includes GitHub Actions workflows for:
 
 2. **Create the Space manually** (required first step):
    - Go to [https://huggingface.co/new-space](https://huggingface.co/new-space)
-   - Set the **Owner** to your username
+   - The **Owner** field will be automatically set to your Hugging Face username (this is your account username, which may differ from your GitHub username)
    - Set the **Space name** to `paralyze`
    - Select **SDK**: `Gradio`
    - Select **Hardware**: `CPU Basic` (free tier)
    - Click **Create Space**
+   
+   **Note**: If you can't select your username, make sure you're logged into Hugging Face. The owner field should auto-populate with your account username.
 
 3. **Get a Hugging Face token**:
    - Go to [https://huggingface.co/settings/tokens](https://huggingface.co/settings/tokens)
@@ -97,12 +99,15 @@ The repository includes GitHub Actions workflows for:
 
 ### GitHub Pages
 
-GitHub Pages hosts a static landing page (since the Gradio app requires backend processing). The page is automatically deployed when you push to `main`.
+GitHub Pages hosts a static landing page (since the Gradio app requires backend processing). 
 
-To enable GitHub Pages:
-1. Go to your repository Settings → Pages
-2. Select "GitHub Actions" as the source
-3. The workflow will automatically deploy on push to `main`
+**To enable GitHub Pages (required first step):**
+1. Go to your GitHub repository
+2. Click **Settings** → **Pages** (in the left sidebar)
+3. Under **Source**, select **GitHub Actions**
+4. Click **Save**
+
+After enabling Pages, the workflow will automatically deploy the landing page when you push to `main`. The page will be available at `https://YOUR_USERNAME.github.io/REPO_NAME/`
 
 ---
 
