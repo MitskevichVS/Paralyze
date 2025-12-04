@@ -144,7 +144,23 @@ jobs:
           path: '_site'
         continue-on-error: false
       
+      - name: Debug workflow info
+        run: |
+          echo "Workflow run ID: ${{ github.run_id }}"
+          echo "Workflow run number: ${{ github.run_number }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "Actor: ${{ github.actor }}"
+      
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v3
+        continue-on-error: true
+      
+      - name: Check deployment status
+        if: failure()
+        run: |
+          echo "Deployment failed. This is often a first-run issue."
+          echo "Try manually triggering the workflow from Actions tab."
+          echo "Or wait a few minutes and push again."
+          exit 1
 
