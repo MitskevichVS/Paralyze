@@ -2,3 +2,4 @@ gradio
 moviepy
 openai-whisper
 torch
+watchdog
