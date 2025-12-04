@@ -9,6 +9,7 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  actions: read
 
 concurrency:
   group: "pages"
@@ -18,12 +19,12 @@ jobs:
   deploy:
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
       pages: write
       id-token: write
+      actions: read
     steps:
       - uses: actions/checkout@v3
       
@@ -144,23 +145,15 @@ jobs:
           path: '_site'
         continue-on-error: false
       
-      - name: Debug workflow info
+      - name: Wait for artifact propagation
         run: |
+          echo "Waiting for artifact to propagate..."
+          sleep 5
           echo "Workflow run ID: ${{ github.run_id }}"
           echo "Workflow run number: ${{ github.run_number }}"
-          echo "Repository: ${{ github.repository }}"
-          echo "Actor: ${{ github.actor }}"
       
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v3
-        continue-on-error: true
-      
-      - name: Check deployment status
-        if: failure()
-        run: |
-          echo "Deployment failed. This is often a first-run issue."
-          echo "Try manually triggering the workflow from Actions tab."
-          echo "Or wait a few minutes and push again."
-          exit 1
+        timeout-minutes: 5
 
